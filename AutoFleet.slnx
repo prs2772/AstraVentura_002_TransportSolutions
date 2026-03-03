@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="AutoFleet.API/AutoFleet.API.csproj" />
+  <Project Path="AutoFleet.Application/AutoFleet.Application.csproj" />
+  <Project Path="AutoFleet.ConsoleClient/AutoFleet.ConsoleClient.csproj" />
+  <Project Path="AutoFleet.Core/AutoFleet.Core.csproj" />
+  <Project Path="AutoFleet.Infrastructure/AutoFleet.Infrastructure.csproj" />
+  <Project Path="AutoFleet.Tests/AutoFleet.Tests.csproj" />
+</Solution>

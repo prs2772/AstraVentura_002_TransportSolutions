@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Base de datos SQL Server
+  autofleet-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: avu_autofleet_sql_server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "1434:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+
+  # Agregada nueva BD 2026-02-19: MongoDB
+  autofleet-mongo:
+    image: mongo:latest
+    container_name: avu_autofleet_mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+  autofleet-api:
+    build:
+      context: .
+      dockerfile: AutoFleet.API/Dockerfile
+    container_name: avu_autofleet_api_container
+    ports:
+      - "5452:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASP_ENV}
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__AutoFleetConnection=Server=${DB_SERVER};Database=${DB_NAME};User Id=${USER_DB};Password=${DB_PASSWORD};TrustServerCertificate=True;
+      - ConnectionStrings__AutoFleetMongoConnection=mongodb://autofleet-mongo:27017
+      - JwtSettings__Secret=${JWT_SECRET}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE}
+    depends_on:
+      - autofleet-db
+      - autofleet-mongo
+    networks:
+      - autofleet-network
+
+volumes:
+  sql_data:
+  mongo_data:
+    #Volumen de mongoDB
+
+networks:
+  autofleet-network:
+    driver: bridge
